@@ -1,5 +1,7 @@
 package com.example.android.sunshine.app;
 
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.text.FieldPosition;
+import java.util.jar.Manifest;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -21,6 +30,9 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+        //int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.perrmission.ACCESS_WIFI_STATE);
+        //ActivityCompat
+
     }
 
     @Override
@@ -57,6 +69,29 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            final ListView listView;
+            listView = (ListView)rootView.findViewById(R.id.list_item);
+            String[] values = new String[]{"Name1",
+                    "Name2",
+                    "Name3",
+                    "Name4",
+                    "Name5",
+                    "Name6",
+                    "Name7",
+                    "Name8",
+
+            };
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textView,values);
+            listView.setAdapter(adapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                public void onItemClick(AdapterView<?>parent,View view,int position, long id){
+                    int itemPosition = position;
+                    String itemValue = (String)listView.getItemAtPosition(position);
+                    Toast.makeText(getActivity(), "Position: "+itemPosition+"ListItem: "+itemValue, Toast.LENGTH_SHORT).show();
+                }
+            });
             return rootView;
         }
     }
