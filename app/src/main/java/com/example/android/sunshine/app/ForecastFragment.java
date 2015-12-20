@@ -5,9 +5,11 @@ package com.example.android.sunshine.app;
  */
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -33,14 +35,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class ForecastFragment extends Fragment {
-    private ArrayAdapter<String> mForecasrAdapter;
+    private ArrayAdapter<String> mForecastAdapter;
     private final String LOG_TAG =  FetchWeatherTask.class.getSimpleName();
     int numDays = 7;
 
@@ -63,41 +63,43 @@ public class ForecastFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
-        if(id == R.id.action_refresh){
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("Pune,IN");  //94043
-            return true;
-        }
+
+                if(id == R.id.action_refresh){
+                    updateWeather();
+                    return true;
+                }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void updateWeather(){
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.key_location),getString(R.string.default_location));
+        //weatherTask.execute("Pune,IN");  //94043
+        weatherTask.execute(location);  //94043
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        updateWeather();
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-        String[] values = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-        List<String> weekForecast = new ArrayList<>(Arrays.asList(values));
-        mForecasrAdapter = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textView,weekForecast);
+        
+        mForecastAdapter = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textView,new ArrayList<String>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView)rootView.findViewById(R.id.list_item_forecast);
-        listView.setAdapter(mForecasrAdapter);
+        listView.setAdapter(mForecastAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapter,View view, int position, long id){
                 //Toast.makeText(getActivity(),mForecasrAdapter.getItem(position),Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(),DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT,mForecasrAdapter.getItem(position));
+                        .putExtra(Intent.EXTRA_TEXT,mForecastAdapter.getItem(position));
                 startActivity(intent);
             }
         });
@@ -306,14 +308,14 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] result) {
             if(result!=null) {
-                mForecasrAdapter.clear();
+                mForecastAdapter.clear();
                 /*
                 mForecasrAdapter.clear();
                 for(String dayForecast: result){
                     mForecasrAdapter.add(dayForecast);
                 }
                 */
-                mForecasrAdapter.addAll(result);
+                mForecastAdapter.addAll(result);
             }
         }
     }
