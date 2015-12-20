@@ -13,4 +13,17 @@
     <string name="title_location">Location </string>
     <string name="location_summary">This is location summary</string>
 
+
+    <string name="title_temp_unit">Pick temperature unit</string>
+    <string name="key_temp_unit">temp_unit</string>
+    <string name="default_temp_unit">Metric</string>
+    <array name="entries_temp_units">
+    <item> Metric </item>
+        <item> Imperial </item>
+    </array>
+    <array name="entry_values_temp_units">
+        <item>Metric</item>
+        <item>Imperial</item>
+    </array>
+
 </resources>

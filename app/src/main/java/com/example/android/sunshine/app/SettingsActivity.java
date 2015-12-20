@@ -191,6 +191,7 @@ public class SettingsActivity extends PreferenceActivity {
             //bindPreferenceSummaryToValue(findPreference("example_text"));
             //bindPreferenceSummaryToValue(findPreference("key_location"));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.key_location)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.key_temp_unit)));
             //bindPreferenceSummaryToValue(findPreference("example_list"));
         }
     }

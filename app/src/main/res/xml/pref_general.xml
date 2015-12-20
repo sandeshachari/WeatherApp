@@ -29,9 +29,17 @@
         android:defaultValue="@string/default_location"
         android:inputType="text"
         android:singleLine="true"
-        android:summary="@string/location_summary"
         />
 
+    <ListPreference
+        android:title="@string/title_temp_unit"
+        android:key = "@string/key_temp_unit"
+        android:inputType="text"
+        android:singleLine="true"
+        android:entries="@array/entries_temp_units"
+        android:entryValues="@array/entry_values_temp_units"
+        android:defaultValue="@string/default_temp_unit"
+        />
 
 
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
