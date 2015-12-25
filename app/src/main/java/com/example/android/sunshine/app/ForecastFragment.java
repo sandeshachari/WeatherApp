@@ -72,11 +72,15 @@ public class ForecastFragment extends Fragment {
     }
 
     public void updateWeather(){
-        FetchWeatherTask weatherTask = new FetchWeatherTask();
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.key_location),getString(R.string.default_location));
-        //weatherTask.execute("Pune,IN");  //94043
-        weatherTask.execute(location);  //94043
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        weatherTask.execute(location);  //94043  //data
+
+
+
+
     }
     @Override
     public void onStart(){
@@ -89,16 +93,16 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mForecastAdapter = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textView,new ArrayList<String>());
+        mForecastAdapter = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast, R.id.list_item_forecast_textView,new ArrayList<String>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView)rootView.findViewById(R.id.list_item_forecast);
         listView.setAdapter(mForecastAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapter,View view, int position, long id){
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 //Toast.makeText(getActivity(),mForecasrAdapter.getItem(position),Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(),DetailActivity.class)
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT,mForecastAdapter.getItem(position));
                 startActivity(intent);
             }
@@ -193,7 +197,7 @@ public class ForecastFragment extends Fragment {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String tempUnit = prefs.getString(getString(R.string.key_temp_unit), getString(R.string.default_temp_unit));
-            if(tempUnit != (getString(R.string.default_temp_unit))){
+            if(tempUnit.equals(getString(R.string.temp_unit_imperial))){
                 high = 32 + 9*high/5;
                 low = 32 + 9*low/5;
             }

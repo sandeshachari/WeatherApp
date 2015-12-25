@@ -19,23 +19,30 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+//import android.widget.ShareActionProvider;
 
 public class DetailActivity extends ActionBarActivity {
 
-    @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new DetailFragment())
                     .commit();
         }
     }
@@ -47,6 +54,8 @@ public class DetailActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.detail, menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -62,16 +71,31 @@ public class DetailActivity extends ActionBarActivity {
             return true;
         }
 
+        /*
+        else if(id == R.id.action_share){
+            shareWeatherData();
+        }
+        */
+
+
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class DetailFragment extends Fragment {
+        public static String LOG_TAG = DetailActivity.class.getSimpleName();
+        public static String mForecastStr;
+        public static String hashTagStr = "  #Sunshine";
 
-        public PlaceholderFragment() {
+        public DetailFragment() {
+            setHasOptionsMenu(true);
         }
+
+
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,9 +105,39 @@ public class DetailActivity extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             if(intent!=null && intent.hasExtra(Intent.EXTRA_TEXT)){
                 String forecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+                mForecastStr = forecastStr;
                 ((TextView) rootView.findViewById(R.id.detail_text)).setText(forecastStr);
             }
             return rootView;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
+            menuInflater.inflate(R.menu.detailfragment, menu);
+            MenuItem menuItem = menu.findItem(R.id.action_share);
+            ShareActionProvider mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+            //ShareActionProvider mShareActionProvider = (ShareActionProvider) menuItem.getActionProvider();
+            if(mShareActionProvider!=null){
+                mShareActionProvider.setShareIntent(shareWeatherData());
+            }else{
+                Log.d(LOG_TAG, "Share action provider is null");
+                Toast.makeText(getActivity(),"Is null",Toast.LENGTH_LONG).show();
+            }
+        }
+
+
+        private Intent shareWeatherData() {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mForecastStr + hashTagStr);
+
+        /*
+        if (shareIntent.resolveActivity(gegetPackageManager() != null)){
+            startActivity(shareIntent);
+        }
+        */
+            return shareIntent;
         }
     }
 }
